@@ -7,6 +7,7 @@ import { Topbar } from './Topbar';
 export interface AppShellProps {
   leftContent?: React.ReactNode;
   asOfDate?: string;
+  executionLabel?: string;
   onRefresh?: () => void;
   children: React.ReactNode;
 }
@@ -14,6 +15,7 @@ export interface AppShellProps {
 export function AppShell({
   leftContent,
   asOfDate,
+  executionLabel,
   onRefresh,
   children,
 }: AppShellProps) {
@@ -24,7 +26,7 @@ export function AppShell({
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <Topbar leftContent={leftContent} asOfDate={asOfDate} onRefresh={onRefresh} />
+        <Topbar leftContent={leftContent} asOfDate={asOfDate} executionLabel={executionLabel} onRefresh={onRefresh} />
         <main className="flex-1 p-4 flex flex-col gap-3 min-w-0">
           {children}
         </main>

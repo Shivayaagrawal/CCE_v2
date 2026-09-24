@@ -34,8 +34,20 @@ export function Tooltip({
       {visible && content && (
         <div
           role="tooltip"
-          className={`absolute z-50 px-2.5 py-1.5 text-[11px] leading-[14px] font-medium text-white bg-[var(--ink)] rounded-[var(--r-sm)] shadow-[var(--e2)] pointer-events-none whitespace-normal max-w-[260px] animate-fadeIn ${placementClasses[placement]}`}
+          className={`absolute z-50 px-3 py-2 text-[12px] leading-[16px] font-medium text-white bg-[var(--ink)] rounded-[10px] shadow-[var(--e2)] pointer-events-none whitespace-normal max-w-[280px] ${placementClasses[placement]}`}
         >
+          <span
+            aria-hidden
+            className={`absolute w-2 h-2 bg-[var(--ink)] rotate-45 ${
+              placement === 'bottom'
+                ? '-top-1 left-1/2 -translate-x-1/2'
+                : placement === 'left'
+                ? '-right-1 top-1/2 -translate-y-1/2'
+                : placement === 'right'
+                ? '-left-1 top-1/2 -translate-y-1/2'
+                : '-bottom-1 left-1/2 -translate-x-1/2'
+            }`}
+          />
           {content}
         </div>
       )}

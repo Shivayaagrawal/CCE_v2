@@ -53,7 +53,7 @@ export function ChartFrame({
           )}
         </div>
       ) : (
-        <div className="w-full h-full min-h-[160px]">{children}</div>
+        <div className="w-full min-h-[160px] overflow-hidden">{children}</div>
       )}
     </Panel>
   );

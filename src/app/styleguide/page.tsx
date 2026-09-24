@@ -183,8 +183,8 @@ export default function StyleguidePage() {
                 {[
                   { state: 'assured', label: 'Assured / Clear', mark: '#157F52', ink: '#0B5B36', bg: '#E6F4EC', border: '#BFE1CE' },
                   { state: 'limitation', label: 'Limitation', mark: '#B07D00', ink: '#6E4A00', bg: '#FBF1DC', border: '#EDD9AC' },
-                  { state: 'review', label: 'Review Required', mark: '#D2601A', ink: '#8A3D0B', bg: '#FCEDE3', border: '#F2D2BC' },
-                  { state: 'escalate', label: 'Escalate / Breach', mark: '#B3261E', ink: '#8F1D16', bg: '#FBE8E6', border: '#F1C8C4' },
+                  { state: 'review', label: 'Review Required', mark: '#FF6A00', ink: '#9A3400', bg: '#FFE8D6', border: '#FF9A4D' },
+                  { state: 'escalate', label: 'Escalate / Breach', mark: '#FF1F1F', ink: '#9F0010', bg: '#FFE1E1', border: '#FF6B6B' },
                   { state: 'unmeasured', label: 'Unmeasured', mark: '#8A94A3', ink: '#4B5563', bg: '#F1F3F6', border: '#DDE1E7' },
                 ].map((s) => (
                   <div key={s.state} className="p-3 rounded-[var(--r-md)] border flex flex-col gap-2" style={{ backgroundColor: s.bg, borderColor: s.border, color: s.ink }}>
@@ -212,7 +212,7 @@ export default function StyleguidePage() {
                     { slot: '2', name: 'SCHEDULE_MAINTENANCE', hex: '#EB6834', token: '--series-2' },
                     { slot: '3', name: 'REPLACE_BATTERY', hex: '#1BAF7A', token: '--series-3' },
                     { slot: '4', name: 'RETIRE_ASSET', hex: '#EDA100', token: '--series-4' },
-                    { slot: '5', name: 'ESCALATE_FOR_REVIEW', hex: '#E87BA4', token: '--series-5' },
+                    { slot: '5', name: 'ESCALATE_FOR_REVIEW', hex: '#FF1F1F', token: '--series-5' },
                   ].map((c) => (
                     <div key={c.slot} className="p-2 rounded-[var(--r-sm)] text-white text-center flex flex-col justify-between h-20" style={{ backgroundColor: c.hex }}>
                       <div className="text-[10px] font-bold">Slot {c.slot}</div>

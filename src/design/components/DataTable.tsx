@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Tooltip } from './Tooltip';
 
 export interface Column<T> {
   key: string;
@@ -25,6 +24,7 @@ export interface DataTableProps<T> {
   emptyTitle?: string;
   emptyDetail?: string;
   className?: string;
+  fixedLayout?: boolean;
 }
 
 export function DataTable<T extends Record<string, any>>({
@@ -42,6 +42,7 @@ export function DataTable<T extends Record<string, any>>({
   emptyTitle = 'No records found',
   emptyDetail = 'No events match the selected criteria.',
   className = '',
+  fixedLayout = false,
 }: DataTableProps<T>) {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -95,9 +96,9 @@ export function DataTable<T extends Record<string, any>>({
   }
 
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div className={`flex flex-col min-w-0 ${className}`}>
       <div className="overflow-x-auto border border-[var(--rule)] rounded-[var(--r-md)] bg-[var(--surface)]">
-        <table className="w-full text-left border-collapse">
+        <table className={`w-full text-left border-collapse ${fixedLayout ? 'table-fixed' : ''}`}>
           <thead>
             <tr className="h-[30px] border-b border-[var(--rule)] bg-[var(--surface-2)] text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--ink-3)] select-none">
               {columns.map((col) => {
@@ -114,7 +115,7 @@ export function DataTable<T extends Record<string, any>>({
                   <th
                     key={col.key}
                     style={{ width: col.width }}
-                    className={`px-3 py-1 font-semibold ${alignClass} ${
+                    className={`px-2 py-1 font-semibold ${fixedLayout ? 'overflow-hidden whitespace-normal leading-[13px]' : 'whitespace-nowrap'} ${alignClass} ${
                       canSort ? 'cursor-pointer hover:text-[var(--ink)]' : ''
                     }`}
                     onClick={() => canSort && handleSort(col.key)}
@@ -137,9 +138,10 @@ export function DataTable<T extends Record<string, any>>({
               const clickable = onRowClick && isRowClickable(row);
               const key = getRowKey(row, idx);
 
-              const rowContent = (
+              return (
                 <tr
                   key={key}
+                  title={!clickable && onRowClick ? rowDisabledTooltip : undefined}
                   onClick={() => clickable && onRowClick(row)}
                   className={`h-[34px] text-[13px] transition-colors ${
                     clickable
@@ -156,23 +158,13 @@ export function DataTable<T extends Record<string, any>>({
                         : 'text-left';
 
                     return (
-                      <td key={col.key} className={`px-3 py-1.5 ${alignClass}`}>
+                      <td key={col.key} className={`px-2 py-1.5 ${fixedLayout ? 'overflow-hidden' : 'whitespace-nowrap'} ${alignClass}`}>
                         {col.render ? col.render(row, idx) : row[col.key]}
                       </td>
                     );
                   })}
                 </tr>
               );
-
-              if (onRowClick && !clickable && rowDisabledTooltip) {
-                return (
-                  <Tooltip key={key} content={rowDisabledTooltip} placement="top">
-                    {rowContent}
-                  </Tooltip>
-                );
-              }
-
-              return rowContent;
             })}
           </tbody>
         </table>

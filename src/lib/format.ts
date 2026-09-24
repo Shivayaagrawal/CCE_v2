@@ -118,6 +118,17 @@ export function formatDateTime(isoString: string | null | undefined): string {
 /**
  * Formats ISO timestamp in tooltip: e.g. 2026-06-01T09:30:00Z
  */
+export function formatShortDateTime(isoString: string | null | undefined): string {
+  return withNullGuard(isoString, (s) => {
+    const datePart = formatDate(s);
+    const timePart = formatTime(s);
+    if (datePart === NOT_MEASURED || timePart === NOT_MEASURED) return NOT_MEASURED;
+    const d = new Date(s);
+    const shortDate = `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+    return `${shortDate}, ${timePart}`;
+  });
+}
+
 export function formatIsoUtc(isoString: string | null | undefined): string {
   return withNullGuard(isoString, (s) => {
     const d = new Date(s);

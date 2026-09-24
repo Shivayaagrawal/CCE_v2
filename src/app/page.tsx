@@ -1,3 +1,7 @@
+'use client';
+
+import { OverviewDashboard } from '@/features/overview/OverviewDashboard';
+
 export default function HomePage() {
-  return null;
+  return <OverviewDashboard />;
 }

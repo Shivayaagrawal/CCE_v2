@@ -4,7 +4,7 @@ import { NOT_MEASURED } from '@/lib/format';
 
 export interface MetricTileProps {
   label: string;
-  value: string | number | null | undefined;
+  value: React.ReactNode;
   unit?: string;
   delta?: {
     value: string | number;
@@ -27,8 +27,8 @@ export function MetricTile({
   size = 'md',
   className = '',
 }: MetricTileProps) {
-  const isNull = value === null || value === undefined;
-  const displayValue = isNull ? NOT_MEASURED : String(value);
+  const isNull = value === null || value === undefined || value === '';
+  const displayValue = isNull ? NOT_MEASURED : value;
 
   const valueClasses =
     size === 'lg'
@@ -40,7 +40,7 @@ export function MetricTile({
       className={`p-3.5 bg-[var(--surface)] border border-[var(--rule)] rounded-[var(--r-md)] shadow-[var(--e1)] flex flex-col justify-between ${className}`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--ink-3)] truncate">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--ink-3)] leading-[14px]">
           {label}
         </span>
         {provenance === 'supplied' && (

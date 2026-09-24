@@ -34,13 +34,31 @@ const ENGINE_ACTIONS: EngineAction[] = [
   'ESCALATE_FOR_REVIEW',
 ];
 
+const DATE_PRESETS = [
+  { id: 'today', label: 'Today', days: 0 },
+  { id: '7', label: 'Last 7 days', days: 6 },
+  { id: '14', label: 'Last 14 days', days: 13 },
+  { id: '30', label: 'Last 30 days', days: 29 },
+] as const;
+
+const SOH_STATUSES: SohStatus[] = ['EXCELLENT', 'GOOD', 'FAIR', 'REPLACEMENT REVIEW', 'CRITICAL'];
+
+function presetRange(asOf: string, days: number): { from: string; to: string } {
+  const end = new Date(asOf);
+  const start = new Date(end);
+  start.setUTCDate(start.getUTCDate() - days);
+  start.setUTCHours(0, 0, 0, 0);
+  return { from: start.toISOString(), to: end.toISOString() };
+}
+
 export function FilterBar({
   filters,
   onChange,
   onExport,
   totalFiltered,
+  asOf,
   className = '',
-}: FilterBarProps) {
+}: FilterBarProps & { asOf?: string }) {
   const activeChips: { key: keyof EventFilters; value: string; label: string }[] = [];
 
   if (filters.vehicleTypes && filters.vehicleTypes.length > 0) {
@@ -67,6 +85,22 @@ export function FilterBar({
     });
   }
 
+  if (filters.engineActions && filters.engineActions.length > 0) {
+    filters.engineActions.forEach((action) => {
+      activeChips.push({ key: 'engineActions', value: action, label: `Action: ${action}` });
+    });
+  }
+
+  if (filters.sohStatuses && filters.sohStatuses.length > 0) {
+    filters.sohStatuses.forEach((status) => {
+      activeChips.push({ key: 'sohStatuses', value: status, label: `SoH: ${status}` });
+    });
+  }
+
+  if (filters.from || filters.to) {
+    activeChips.push({ key: 'from', value: filters.from || '', label: 'Date range' });
+  }
+
   if (filters.query) {
     activeChips.push({ key: 'query', value: filters.query, label: `Search: "${filters.query}"` });
   }
@@ -75,6 +109,9 @@ export function FilterBar({
     const next = { ...filters };
     if (key === 'query') {
       delete next.query;
+    } else if (key === 'from') {
+      delete next.from;
+      delete next.to;
     } else if (Array.isArray(next[key])) {
       const arr = (next[key] as string[]).filter((x) => x !== val);
       if (arr.length > 0) {
@@ -155,6 +192,56 @@ export function FilterBar({
           </select>
 
           {/* Manufacturer Filter */}
+          <select
+            aria-label="Date range"
+            value=""
+            onChange={(e) => {
+              const preset = DATE_PRESETS.find((item) => item.id === e.target.value);
+              if (!preset || !asOf) {
+                onChange({ ...filters, from: undefined, to: undefined });
+                return;
+              }
+              const range = presetRange(asOf, preset.days);
+              onChange({ ...filters, from: range.from, to: range.to });
+            }}
+            className="px-2.5 py-1.5 text-[12px] bg-[var(--surface-2)] border border-[var(--rule)] rounded-[var(--r-sm)] text-[var(--ink)] outline-none focus:border-[var(--primary)]"
+          >
+            <option value="">All dates</option>
+            {DATE_PRESETS.map((preset) => (
+              <option key={preset.id} value={preset.id}>{preset.label}</option>
+            ))}
+          </select>
+
+          <select
+            aria-label="Engine action"
+            value={filters.engineActions?.[0] || ''}
+            onChange={(e) => {
+              const val = e.target.value as EngineAction;
+              onChange({ ...filters, engineActions: val ? [val] : undefined });
+            }}
+            className="px-2.5 py-1.5 text-[12px] bg-[var(--surface-2)] border border-[var(--rule)] rounded-[var(--r-sm)] text-[var(--ink)] outline-none focus:border-[var(--primary)]"
+          >
+            <option value="">All engine actions</option>
+            {ENGINE_ACTIONS.map((action) => (
+              <option key={action} value={action}>{action}</option>
+            ))}
+          </select>
+
+          <select
+            aria-label="SoH band"
+            value={filters.sohStatuses?.[0] || ''}
+            onChange={(e) => {
+              const val = e.target.value as SohStatus;
+              onChange({ ...filters, sohStatuses: val ? [val] : undefined, sohBand: undefined });
+            }}
+            className="px-2.5 py-1.5 text-[12px] bg-[var(--surface-2)] border border-[var(--rule)] rounded-[var(--r-sm)] text-[var(--ink)] outline-none focus:border-[var(--primary)]"
+          >
+            <option value="">All SoH bands</option>
+            {SOH_STATUSES.map((status) => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
+
           <select
             value={filters.manufacturers?.[0] || ''}
             onChange={(e) => {

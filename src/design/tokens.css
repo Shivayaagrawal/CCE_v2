@@ -39,15 +39,15 @@
   --limitation-bg:   #FBF1DC;
   --limitation-border:#EDD9AC;
 
-  --review:          #D2601A;
-  --review-ink:      #8A3D0B;
-  --review-bg:       #FCEDE3;
-  --review-border:   #F2D2BC;
+  --review:          #FF6A00;
+  --review-ink:      #9A3400;
+  --review-bg:       #FFE8D6;
+  --review-border:   #FF9A4D;
 
-  --escalate:        #B3261E;
-  --escalate-ink:    #8F1D16;
-  --escalate-bg:     #FBE8E6;
-  --escalate-border: #F1C8C4;
+  --escalate:        #FF1F1F;
+  --escalate-ink:    #9F0010;
+  --escalate-bg:     #FFE1E1;
+  --escalate-border: #FF6B6B;
 
   --unmeasured:      #8A94A3;
   --unmeasured-ink:  #4B5563;
@@ -59,7 +59,7 @@
   --series-2:        #EB6834;   /* SCHEDULE_MAINTENANCE */
   --series-3:        #1BAF7A;   /* REPLACE_BATTERY */
   --series-4:        #EDA100;   /* RETIRE_ASSET */
-  --series-5:        #E87BA4;   /* ESCALATE_FOR_REVIEW */
+  --series-5:        #FF1F1F;   /* ESCALATE_FOR_REVIEW */
 
   /* 7.4 sequential ramp (13 named steps 100-700) */
   --seq-100:         #CDE2FB;
@@ -77,8 +77,9 @@
   --seq-700:         #0D366B;
 
   /* 7.5 type scale fonts */
-  --font-sans:       system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono:       ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans:       var(--font-source), "Source Sans 3", sans-serif;
+  --font-display:    var(--font-barlow), Barlow, sans-serif;
+  --font-mono:       var(--font-plex), "IBM Plex Mono", ui-monospace, monospace;
 
   /* 7.6 spacing */
   --s1:              4px;
@@ -120,7 +121,7 @@
 
 /* Utility typography helper classes matching SPEC.md §7.5 */
 .t-hero {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: 34px;
   line-height: 38px;
   font-weight: 600;
@@ -128,7 +129,7 @@
 }
 
 .t-metric {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: 28px;
   line-height: 32px;
   font-weight: 600;
@@ -136,7 +137,7 @@
 }
 
 .t-h1 {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: 20px;
   line-height: 26px;
   font-weight: 600;
@@ -144,7 +145,7 @@
 }
 
 .t-h2 {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-size: 15px;
   line-height: 20px;
   font-weight: 600;

@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 export interface TopbarProps {
   leftContent?: React.ReactNode;
   asOfDate?: string;
+  executionLabel?: string;
   onRefresh?: () => void;
   className?: string;
 }
@@ -12,6 +13,7 @@ export interface TopbarProps {
 export function Topbar({
   leftContent,
   asOfDate = '24 Sep 2026, 10:30 AM',
+  executionLabel = 'Auto Execution ON',
   onRefresh,
   className = '',
 }: TopbarProps) {
@@ -46,9 +48,8 @@ export function Topbar({
       {/* Right region: Status, Clock, Refresh */}
       <div className="flex items-center gap-3 shrink-0">
         {/* Auto Execution status badge */}
-        <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--assured-bg)] text-[var(--assured-ink)] border border-[var(--assured-border)] text-[11px] font-semibold">
-          <span className="w-1.5 h-1.5 rounded-full bg-[var(--assured)] animate-pulse" />
-          <span>Auto Execution ON</span>
+        <div className="hidden md:flex items-center px-2.5 py-1 rounded-full bg-[var(--assured-bg)] text-[var(--assured-ink)] border border-[var(--assured-border)] text-[11px] font-semibold">
+          <span>{executionLabel}</span>
         </div>
 
         {/* As of timestamp */}
