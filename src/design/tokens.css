@@ -1,0 +1,199 @@
+:root {
+  /* 7.1 navigation rail */
+  --rail:            #0B1A2F;
+  --rail-2:          #122844;
+  --rail-active:     #1D4ED8;
+  --rail-ink:        #FFFFFF;   /* 17.5:1 on rail */
+  --rail-ink-muted:  #93A4BD;   /*  6.9:1 on rail */
+
+  /* 7.1 content surfaces */
+  --canvas:          #F5F7FA;
+  --surface:         #FFFFFF;
+  --surface-2:       #F8FAFC;
+  --surface-sunken:  #F1F4F8;
+
+  /* 7.1 lines */
+  --rule:            #E3E8EF;   /* panel borders, table rows */
+  --rule-strong:     #CDD5DF;   /* section dividers only */
+  --grid:            rgba(15,27,45,0.06);  /* chart gridlines */
+
+  /* 7.1 ink */
+  --ink:             #0F1B2D;   /* 17.3:1 */
+  --ink-2:           #4A5A70;   /*  7.0:1 */
+  --ink-3:           #5F6C7E;   /*  5.3:1 — labels, axis, meta */
+
+  /* 7.1 interactive */
+  --primary:         #1D4ED8;   /*  6.7:1 */
+  --primary-hover:   #1A44BD;
+  --primary-wash:    #EEF3FE;
+  --focus-ring:      #2563EB;
+
+  /* 7.2 status colours */
+  --assured:         #157F52;
+  --assured-ink:     #0B5B36;
+  --assured-bg:      #E6F4EC;
+  --assured-border:  #BFE1CE;
+
+  --limitation:      #B07D00;
+  --limitation-ink:  #6E4A00;
+  --limitation-bg:   #FBF1DC;
+  --limitation-border:#EDD9AC;
+
+  --review:          #FF6A00;
+  --review-ink:      #9A3400;
+  --review-bg:       #FFE8D6;
+  --review-border:   #FF9A4D;
+
+  --escalate:        #FF1F1F;
+  --escalate-ink:    #9F0010;
+  --escalate-bg:     #FFE1E1;
+  --escalate-border: #FF6B6B;
+
+  --unmeasured:      #8A94A3;
+  --unmeasured-ink:  #4B5563;
+  --unmeasured-bg:   #F1F3F6;
+  --unmeasured-border:#DDE1E7;
+
+  /* 7.3 categorical series palette (engine actions) */
+  --series-1:        #2A78D6;   /* CONTINUE_OPERATION */
+  --series-2:        #EB6834;   /* SCHEDULE_MAINTENANCE */
+  --series-3:        #1BAF7A;   /* REPLACE_BATTERY */
+  --series-4:        #EDA100;   /* RETIRE_ASSET */
+  --series-5:        #FF1F1F;   /* ESCALATE_FOR_REVIEW */
+
+  /* 7.4 sequential ramp (13 named steps 100-700) */
+  --seq-100:         #CDE2FB;
+  --seq-150:         #B7D3F6;
+  --seq-200:         #9EC5F4;
+  --seq-250:         #86B6EF;   /* Ordinal start step */
+  --seq-300:         #6DA7EC;
+  --seq-350:         #5598E7;
+  --seq-400:         #3987E5;
+  --seq-450:         #2A78D6;
+  --seq-500:         #256ABF;
+  --seq-550:         #1C5CAB;
+  --seq-600:         #184F95;
+  --seq-650:         #104281;
+  --seq-700:         #0D366B;
+
+  /* 7.5 type scale fonts */
+  --font-sans:       var(--font-source), "Source Sans 3", sans-serif;
+  --font-display:    var(--font-barlow), Barlow, sans-serif;
+  --font-mono:       var(--font-plex), "IBM Plex Mono", ui-monospace, monospace;
+
+  /* 7.6 spacing */
+  --s1:              4px;
+  --s2:              8px;
+  --s3:              12px;
+  --s4:              16px;
+  --s5:              20px;
+  --s6:              24px;
+  --s8:              32px;
+
+  /* 7.6 radius */
+  --r-sm:            4px;
+  --r-md:            8px;
+  --r-lg:            10px;
+
+  /* 7.6 elevation */
+  --e1:              0 1px 2px rgba(15,27,45,0.04), 0 0 0 1px var(--rule);
+  --e2:              0 4px 12px rgba(15,27,45,0.10);
+
+  /* 7.7 motion */
+  --m-fast:          140ms;
+  --m-base:          220ms;
+  --m-enter:         320ms;
+  --m-rail:          380ms;
+  --m-stagger:       40ms;
+  --ease-standard:   cubic-bezier(.2,.8,.2,1);
+  --ease-enter:      cubic-bezier(.16,1,.3,1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --m-fast: 0ms;
+    --m-base: 0ms;
+    --m-enter: 0ms;
+    --m-rail: 0ms;
+    --m-stagger: 0ms;
+  }
+}
+
+/* Utility typography helper classes matching SPEC.md §7.5 */
+.t-hero {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 38px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.t-metric {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.t-h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.t-h2 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.t-body {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.t-body-strong {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.t-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.t-micro {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  line-height: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.t-mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Tabular figures helper */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
