@@ -4,7 +4,9 @@ import { LayerResult, Outcome } from '@/lib/data/types';
 export type StatusValue = LayerResult | Outcome;
 
 export interface StatusBadgeProps {
-  status: StatusValue;
+  result?: LayerResult;
+  outcome?: Outcome;
+  status?: StatusValue;
   size?: 'sm' | 'md';
   className?: string;
 }
@@ -83,13 +85,13 @@ function normalizeStatus(status: StatusValue): 'assured' | 'limitation' | 'revie
 function getStatusLabel(status: StatusValue): string {
   switch (status) {
     case 'ASSURED':
-      return 'Assured';
+      return 'ASSURED';
     case 'ASSURED WITH LIMITATIONS':
-      return 'Assured with limitations';
+      return 'ASSURED WITH LIMITATIONS';
     case 'REVIEW REQUIRED':
-      return 'Review required';
+      return 'REVIEW REQUIRED';
     case 'ESCALATE':
-      return 'Escalate';
+      return 'ESCALATE';
     case 'clear':
       return 'Clear';
     case 'limitation':
@@ -135,9 +137,10 @@ const statusStyles: Record<
   },
 };
 
-export function StatusBadge({ status, size = 'md', className = '' }: StatusBadgeProps) {
-  const norm = normalizeStatus(status);
-  const label = getStatusLabel(status);
+export function StatusBadge({ result, outcome, status, size = 'md', className = '' }: StatusBadgeProps) {
+  const value: StatusValue = result ?? outcome ?? status ?? 'unmeasured';
+  const norm = normalizeStatus(value);
+  const label = getStatusLabel(value);
   const style = statusStyles[norm];
 
   const sizeClasses = size === 'sm'
@@ -155,7 +158,7 @@ export function StatusBadge({ status, size = 'md', className = '' }: StatusBadge
         color: style.ink,
       }}
     >
-      <StatusIcon status={status} className={iconSize} />
+      <StatusIcon status={value} className={iconSize} />
       <span>{label}</span>
     </span>
   );

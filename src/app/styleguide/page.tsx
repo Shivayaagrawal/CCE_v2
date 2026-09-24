@@ -20,11 +20,10 @@ import {
   ProvenanceLine,
   FilterBar,
 } from '@/design/components';
-import { Check, TelemetryRow, EventFilters, Outcome } from '@/lib/data/types';
+import { Check, TelemetryRow, EventFilters, Outcome, LayerResult } from '@/lib/data/types';
 
 export default function StyleguidePage() {
   const [activeTab, setActiveTab] = useState('tokens');
-  const [panelTableView, setPanelTableView] = useState(false);
   const [chartTableView, setChartTableView] = useState(false);
   const [filters, setFilters] = useState<EventFilters>({
     outcomes: ['ASSURED'],
@@ -101,6 +100,9 @@ export default function StyleguidePage() {
     { id: 'CRD-2026-FLT-005', batteryId: 'BAT-CU-14S-1209', vehicleId: 'VEH-CU-1082', sohPct: 88.1, outcome: 'ASSURED', action: 'CONTINUE_OPERATION', hasFullRecord: false },
   ];
 
+  const layerResultsList: LayerResult[] = ['clear', 'limitation', 'review', 'breach', 'unmeasured'];
+  const outcomesList: Outcome[] = ['ASSURED', 'ASSURED WITH LIMITATIONS', 'REVIEW REQUIRED', 'ESCALATE'];
+
   return (
     <AppShell
       leftContent={
@@ -135,6 +137,7 @@ export default function StyleguidePage() {
             { id: 'status', label: '2. Status & Outcomes (§7.2, §4)' },
             { id: 'primitives', label: '3. Component Primitives (§9)' },
             { id: 'data', label: '4. Data & Table Primitives (§9, §11)' },
+            { id: 'all', label: 'View All Sections' },
           ]}
           active={activeTab}
           onChange={setActiveTab}
@@ -202,14 +205,14 @@ export default function StyleguidePage() {
 
             {/* 7.3 & 7.4 Categorical & Sequential Ramp */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Panel title="7.3 Categorical Series Palette (Engine Actions)">
+              <Panel title="7.3 Categorical Series Palette (5 Engine Actions)">
                 <div className="grid grid-cols-5 gap-2">
                   {[
-                    { slot: '1', name: 'CONTINUE_OPERATION', hex: '#2A78D6', token: '--cat-1' },
-                    { slot: '2', name: 'SCHEDULE_MAINTENANCE', hex: '#EB6834', token: '--cat-2' },
-                    { slot: '3', name: 'REPLACE_BATTERY', hex: '#1BAF7A', token: '--cat-3' },
-                    { slot: '4', name: 'RETIRE_ASSET', hex: '#EDA100', token: '--cat-4' },
-                    { slot: '5', name: 'ESCALATE_FOR_REVIEW', hex: '#E87BA4', token: '--cat-5' },
+                    { slot: '1', name: 'CONTINUE_OPERATION', hex: '#2A78D6', token: '--series-1' },
+                    { slot: '2', name: 'SCHEDULE_MAINTENANCE', hex: '#EB6834', token: '--series-2' },
+                    { slot: '3', name: 'REPLACE_BATTERY', hex: '#1BAF7A', token: '--series-3' },
+                    { slot: '4', name: 'RETIRE_ASSET', hex: '#EDA100', token: '--series-4' },
+                    { slot: '5', name: 'ESCALATE_FOR_REVIEW', hex: '#E87BA4', token: '--series-5' },
                   ].map((c) => (
                     <div key={c.slot} className="p-2 rounded-[var(--r-sm)] text-white text-center flex flex-col justify-between h-20" style={{ backgroundColor: c.hex }}>
                       <div className="text-[10px] font-bold">Slot {c.slot}</div>
@@ -219,20 +222,26 @@ export default function StyleguidePage() {
                 </div>
               </Panel>
 
-              <Panel title="7.4 Sequential Blue Ramp (SoH Bins)">
-                <div className="grid grid-cols-7 gap-1">
+              <Panel title="7.4 Sequential Ramp (13 Named Steps 100–700)">
+                <div className="grid grid-cols-7 sm:grid-cols-13 gap-1">
                   {[
-                    { step: '1', hex: '#CDE2FB' },
-                    { step: '2', hex: '#9EC5F4' },
-                    { step: '3', hex: '#6DA7EC' },
-                    { step: '4', hex: '#3987E5' },
-                    { step: '5', hex: '#256ABF' },
-                    { step: '6', hex: '#184F95' },
-                    { step: '7', hex: '#0D366B' },
+                    { step: '100', hex: '#CDE2FB' },
+                    { step: '150', hex: '#B6D4F8' },
+                    { step: '200', hex: '#9EC5F4' },
+                    { step: '250', hex: '#86B6EF' },
+                    { step: '300', hex: '#6DA7EC' },
+                    { step: '350', hex: '#5397E9' },
+                    { step: '400', hex: '#3987E5' },
+                    { step: '450', hex: '#2F78D2' },
+                    { step: '500', hex: '#256ABF' },
+                    { step: '550', hex: '#1F5DAA' },
+                    { step: '600', hex: '#184F95' },
+                    { step: '650', hex: '#124380' },
+                    { step: '700', hex: '#0D366B' },
                   ].map((ramp, idx) => (
-                    <div key={ramp.step} className="p-1.5 rounded-[var(--r-sm)] text-center flex flex-col justify-between h-20" style={{ backgroundColor: ramp.hex, color: idx > 3 ? '#FFF' : '#0F1B2D' }}>
-                      <div className="text-[10px] font-bold">{ramp.step}</div>
-                      <div className="text-[8px] font-mono">{ramp.hex}</div>
+                    <div key={ramp.step} className="p-1 rounded-[var(--r-sm)] text-center flex flex-col justify-between h-16" style={{ backgroundColor: ramp.hex, color: idx > 6 ? '#FFF' : '#0F1B2D' }}>
+                      <div className="text-[9px] font-bold">{ramp.step}</div>
+                      <div className="text-[7px] font-mono">{ramp.hex}</div>
                     </div>
                   ))}
                 </div>
@@ -318,19 +327,19 @@ export default function StyleguidePage() {
                     --r-sm: 4px (Badges & Chips)
                   </div>
                   <div className="p-2 rounded-[var(--r-md)] border border-[var(--rule)] bg-[var(--surface)] shadow-[var(--e1)] text-[11px] font-medium">
-                    --r-md: 8px & --e1: Panel Elevation
+                    --r-md: 8px (Panels, Cards) & --e1 Elevation
                   </div>
                   <div className="p-2 rounded-[var(--r-lg)] border border-[var(--rule)] bg-[var(--surface)] shadow-[var(--e2)] text-[11px] font-medium">
-                    --r-lg: 10px & --e2: Popover/Tooltip Shadow
+                    --r-lg: 10px (Overall Result Card Only)
                   </div>
                 </div>
               </Panel>
 
               <Panel title="7.7 Motion Durations">
                 <div className="flex flex-col gap-2 text-[11px] font-mono text-[var(--ink-2)]">
-                  <div>--m-fast: 140ms (Hover / Focus)</div>
-                  <div>--m-base: 220ms (Tabs / Collapse)</div>
-                  <div>--m-enter: 320ms (Panel Entrances)</div>
+                  <div>--m-fast: 140ms (Hover / Focus / Badge)</div>
+                  <div>--m-base: 220ms (Tabs / Expand / Panel Swap)</div>
+                  <div>--m-enter: 320ms (Panel Entrance / Draw-in)</div>
                   <div>--m-rail: 380ms (Layer Transitions)</div>
                   <div>--m-stagger: 40ms (Sibling Delay)</div>
                 </div>
@@ -342,33 +351,28 @@ export default function StyleguidePage() {
         {/* TAB 2: STATUS & OUTCOMES */}
         {(activeTab === 'status' || activeTab === 'all') && (
           <section className="flex flex-col gap-6">
-            <Panel title="StatusBadge: All 5 Layer Results × Sizes">
+            <Panel title="StatusBadge: All 5 Layer Results (clear, limitation, review, breach, unmeasured) × Sizes">
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="text-[11px] font-semibold text-[var(--ink-3)] w-24">Medium (md):</span>
-                  <StatusBadge status="clear" size="md" />
-                  <StatusBadge status="limitation" size="md" />
-                  <StatusBadge status="review" size="md" />
-                  <StatusBadge status="breach" size="md" />
-                  <StatusBadge status="unmeasured" size="md" />
+                  <span className="text-[11px] font-semibold text-[var(--ink-3)] w-28">Medium (md):</span>
+                  {layerResultsList.map((res) => (
+                    <StatusBadge key={res} result={res} size="md" />
+                  ))}
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="text-[11px] font-semibold text-[var(--ink-3)] w-24">Small (sm):</span>
-                  <StatusBadge status="clear" size="sm" />
-                  <StatusBadge status="limitation" size="sm" />
-                  <StatusBadge status="review" size="sm" />
-                  <StatusBadge status="breach" size="sm" />
-                  <StatusBadge status="unmeasured" size="sm" />
+                  <span className="text-[11px] font-semibold text-[var(--ink-3)] w-28">Small (sm):</span>
+                  {layerResultsList.map((res) => (
+                    <StatusBadge key={res} result={res} size="sm" />
+                  ))}
                 </div>
               </div>
             </Panel>
 
-            <Panel title="StatusBadge: All 4 Overall Assurance Outcomes">
+            <Panel title="StatusBadge: All 4 Overall Assurance Outcomes (ASSURED, ASSURED WITH LIMITATIONS, REVIEW REQUIRED, ESCALATE)">
               <div className="flex items-center gap-3 flex-wrap">
-                <StatusBadge status="ASSURED" size="md" />
-                <StatusBadge status="ASSURED WITH LIMITATIONS" size="md" />
-                <StatusBadge status="REVIEW REQUIRED" size="md" />
-                <StatusBadge status="ESCALATE" size="md" />
+                {outcomesList.map((out) => (
+                  <StatusBadge key={out} outcome={out} size="md" />
+                ))}
               </div>
             </Panel>
 
@@ -555,7 +559,7 @@ export default function StyleguidePage() {
                   {
                     key: 'outcome',
                     label: 'Outcome',
-                    render: (row) => <StatusBadge status={row.outcome} size="sm" />,
+                    render: (row) => <StatusBadge outcome={row.outcome} size="sm" />,
                   },
                   {
                     key: 'action',

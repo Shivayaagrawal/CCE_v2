@@ -55,21 +55,26 @@
   --unmeasured-border:#DDE1E7;
 
   /* 7.3 categorical series palette (engine actions) */
-  --cat-1:           #2A78D6;   /* CONTINUE_OPERATION */
-  --cat-2:           #EB6834;   /* SCHEDULE_MAINTENANCE */
-  --cat-3:           #1BAF7A;   /* REPLACE_BATTERY */
-  --cat-4:           #EDA100;   /* RETIRE_ASSET */
-  --cat-5:           #E87BA4;   /* ESCALATE_FOR_REVIEW */
+  --series-1:        #2A78D6;   /* CONTINUE_OPERATION */
+  --series-2:        #EB6834;   /* SCHEDULE_MAINTENANCE */
+  --series-3:        #1BAF7A;   /* REPLACE_BATTERY */
+  --series-4:        #EDA100;   /* RETIRE_ASSET */
+  --series-5:        #E87BA4;   /* ESCALATE_FOR_REVIEW */
 
-  /* 7.4 sequential ramp */
-  --seq-1:           #CDE2FB;
-  --seq-2:           #9EC5F4;
-  --seq-3:           #6DA7EC;
-  --seq-4:           #3987E5;
-  --seq-5:           #256ABF;
-  --seq-6:           #184F95;
-  --seq-7:           #0D366B;
-  --seq-ord-start:   #86B6EF;
+  /* 7.4 sequential ramp (13 named steps 100-700) */
+  --seq-100:         #CDE2FB;
+  --seq-150:         #B6D4F8;
+  --seq-200:         #9EC5F4;
+  --seq-250:         #86B6EF;   /* Ordinal start step */
+  --seq-300:         #6DA7EC;
+  --seq-350:         #5397E9;
+  --seq-400:         #3987E5;
+  --seq-450:         #2F78D2;
+  --seq-500:         #256ABF;
+  --seq-550:         #1F5DAA;
+  --seq-600:         #184F95;
+  --seq-650:         #124380;
+  --seq-700:         #0D366B;
 
   /* 7.5 type scale fonts */
   --font-sans:       system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -94,19 +99,21 @@
   --e2:              0 4px 12px rgba(15,27,45,0.10);
 
   /* 7.7 motion */
-  --m-fast:          140ms cubic-bezier(.2,.8,.2,1);
-  --m-base:          220ms cubic-bezier(.2,.8,.2,1);
-  --m-enter:         320ms cubic-bezier(.16,1,.3,1);
-  --m-rail:          380ms cubic-bezier(.16,1,.3,1);
+  --m-fast:          140ms;
+  --m-base:          220ms;
+  --m-enter:         320ms;
+  --m-rail:          380ms;
   --m-stagger:       40ms;
+  --ease-standard:   cubic-bezier(.2,.8,.2,1);
+  --ease-enter:      cubic-bezier(.16,1,.3,1);
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --m-fast: 0ms linear;
-    --m-base: 0ms linear;
-    --m-enter: 0ms linear;
-    --m-rail: 0ms linear;
+    --m-fast: 0ms;
+    --m-base: 0ms;
+    --m-enter: 0ms;
+    --m-rail: 0ms;
     --m-stagger: 0ms;
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outcome } from '@/lib/data/types';
-import { StatusBadge, StatusIcon } from './StatusBadge';
+import { StatusIcon } from './StatusBadge';
 
 export interface OutcomeCardProps {
   outcome: Outcome;
@@ -14,28 +14,28 @@ const outcomeMeta: Record<
   { label: string; bg: string; border: string; ink: string; mark: string }
 > = {
   ASSURED: {
-    label: 'Assured',
+    label: 'ASSURED',
     bg: 'var(--assured-bg)',
     border: 'var(--assured-border)',
     ink: 'var(--assured-ink)',
     mark: 'var(--assured)',
   },
   'ASSURED WITH LIMITATIONS': {
-    label: 'Assured with limitations',
+    label: 'ASSURED WITH LIMITATIONS',
     bg: 'var(--limitation-bg)',
     border: 'var(--limitation-border)',
     ink: 'var(--limitation-ink)',
     mark: 'var(--limitation)',
   },
   'REVIEW REQUIRED': {
-    label: 'Review required',
+    label: 'REVIEW REQUIRED',
     bg: 'var(--review-bg)',
     border: 'var(--review-border)',
     ink: 'var(--review-ink)',
     mark: 'var(--review)',
   },
   ESCALATE: {
-    label: 'Escalate',
+    label: 'ESCALATE',
     bg: 'var(--escalate-bg)',
     border: 'var(--escalate-border)',
     ink: 'var(--escalate-ink)',
