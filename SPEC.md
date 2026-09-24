@@ -1,6 +1,6 @@
 # CCE Decision Assurance Dashboard — Build Specification
 
-**Version** 1.0 · **Date** 24 September 2026 · **Status** Approved to build
+**Version** 1.2 · **Date** 24 September 2026 · **Status** Approved to build · Phase 0.0 merged
 **Owners** Yokesh (Track A) · Shivanya (Track B)
 **Repo** `github.com/Shivayaagrawal/CCE_v2` · **Dev port** 3002
 
@@ -385,12 +385,47 @@ export interface DecisionEvent {
   timestampUtc: string;
   batteryId: string;
   vehicleId: string;
+  vehicleType: VehicleType;
+  manufacturer: string;
   sohPct: number;
   sohStatus: SohStatus;
   engineAction: EngineAction;
   outcome: Outcome;
   layerResults: Record<LayerKey, LayerResult>;
   hasFullRecord: boolean;
+}
+
+/** Vehicle categories. Derived from the `vehicle_type` field on the source
+ *  vehicle record. These five are the closed set for this build. */
+export type VehicleType =
+  | 'Last Mile Delivery'
+  | 'Intercity Cargo'
+  | 'Passenger Shuttle'
+  | 'Municipal Fleet'
+  | 'Rental Pool';
+
+/** The filter shape every accessor accepts. Omitted keys mean "no constraint".
+ *  Arrays are OR within a key, AND across keys. */
+export interface EventFilters {
+  /** Inclusive ISO date bounds. Omit for the whole window. */
+  from?: string;
+  to?: string;
+  vehicleTypes?: VehicleType[];
+  manufacturers?: string[];
+  outcomes?: Outcome[];
+  engineActions?: EngineAction[];
+  sohStatuses?: SohStatus[];
+  /** SoH band filter, used by cross-filtering from the distribution chart. */
+  sohBand?: { min: number; max: number };
+  /** Free-text match against decision ID, battery ID and vehicle ID. */
+  query?: string;
+  /** Pagination. Defaults: page 1, pageSize 8 (§12). */
+  page?: number;
+  pageSize?: number;
+  sort?: {
+    column: 'timestampUtc' | 'sohPct' | 'outcome' | 'batteryId' | 'vehicleId';
+    direction: 'asc' | 'desc';
+  };
 }
 
 // ---------- aggregates ----------
@@ -504,6 +539,8 @@ The overview screen needs a fleet. Four rows would make it meaningless. Generate
 These counts are chosen so the displayed shares sum to exactly 100.0%. Where any other set of shares is displayed together, apply **largest-remainder rounding** so the displayed figures always sum to 100.0% — a donut legend that adds up to 100.1% is the kind of detail an enterprise buyer notices.
 
 - Battery IDs `BAT-CU-14S-NNNN`, vehicle IDs `VEH-CU-NNNN`, both 4-digit, drawn from a fleet of **312 vehicles**, each vehicle carrying 1–2 batteries over the window.
+- Each vehicle is assigned one `VehicleType` at creation and keeps it for every event. Distribution across the 312 vehicles: Last Mile Delivery 128 · Intercity Cargo 71 · Passenger Shuttle 54 · Municipal Fleet 35 · Rental Pool 24. The four UC records all sit on `VEH-CU-4092`, which is **Last Mile Delivery**.
+- `manufacturer` is drawn from `LG` (198 vehicles), `Samsung SDI` (68), `Exide` (46). The four UC records are `LG`, as supplied.
 - SoH drawn per outcome so that the bands are consistent with §4.4: `ASSURED` 80–96%, `ASSURED WITH LIMITATIONS` 80–94%, `REVIEW REQUIRED` 72–89%, `ESCALATE` 54–79%.
 - `engineAction` derived from SoH via the §7.4 policy bands — **never assigned independently**. A row whose action contradicts its SoH is a bug the consistency test must catch.
 - Per-layer results generated so they are *compatible* with the row's outcome under §4.3, then the outcome is stored as the authority.
@@ -787,7 +824,20 @@ Each screen below lists every panel. A panel's contents are exhaustive — nothi
 
 ### 11.0 Decision Events Dashboard — `/`
 
-**Filter bar.** Date range (preset rows: today / last 7 / last 14 / last 30 days, custom behind a hairline) · Vehicle group · Battery model · Manufacturer · Engine action · Assurance outcome · `Filters` (opens a panel) · `Export` (downloads a CSV of the currently filtered rows — real, not decorative). Active filters render as removable chips below the bar.
+**Filter bar.** Six controls, every one backed by a real field:
+
+| Control | Type | Backed by |
+|---|---|---|
+| Date range | Preset rows (today / last 7 / last 14 / last 30 days), custom behind a hairline | `timestampUtc` |
+| Vehicle type | Multi-select | `vehicleType` |
+| Manufacturer | Multi-select | `manufacturer` |
+| Engine action | Multi-select | `engineAction` |
+| Assurance outcome | Multi-select | `outcome` |
+| SoH band | Multi-select over the §7.4 bands | `sohPct` |
+
+Plus `Export` — downloads a CSV of the currently filtered rows, real, not decorative. Active filters render as removable chips below the bar.
+
+> The mockup's "Vehicle group" and "Battery model" controls are **dropped**. There is no battery model field in the source at all, and no vehicle grouping. `vehicleType` replaces the former and is backed by the source vehicle record's `vehicle_type` field. Inventing a filter that filters nothing is worse than having one fewer control.
 
 **KPI row — five tiles.** Each: label, value, delta vs. the previous equal-length window.
 
