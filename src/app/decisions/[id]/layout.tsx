@@ -4,8 +4,7 @@ import { AppShell } from '@/features/shell';
 import { Breadcrumb } from '@/design/components/Breadcrumb';
 import { EmptyState } from '@/design/components/EmptyState';
 import { Panel } from '@/design/components/Panel';
-import { DecisionHeader } from '@/features/decision/DecisionHeader';
-import { PipelineRail } from '@/features/decision/PipelineRail';
+import { DecisionHeader, PipelineRail, DecisionBreadcrumb } from '@/features/decision';
 import { getDecision } from '@/lib/data';
 
 export interface DecisionLayoutProps {
@@ -44,17 +43,10 @@ export default async function DecisionLayout({
 
   return (
     <AppShell
-      leftContent={
-        <Breadcrumb
-          items={[
-            { label: 'Decision Events', href: '/' },
-            { label: record.id, href: `/decisions/${record.id}/input` },
-            { label: 'Input Assurance' },
-          ]}
-        />
-      }
+      leftContent={<DecisionBreadcrumb id={record.id} />}
     >
       <div className="flex flex-col gap-3 -m-4 sm:-m-6 min-h-screen bg-[var(--canvas)]">
+
         {/* Sticky 78px Decision Header Strip (12 cols) */}
         <DecisionHeader record={record} />
 

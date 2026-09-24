@@ -1,13 +1,13 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { getDecision } from '@/lib/data';
-import { InputAssurancePanel } from '@/features/layers/InputAssurancePanel';
+import { ModelAssurancePanel } from '@/features/layers/ModelAssurancePanel';
 
-export interface InputPageProps {
+export interface ModelPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function InputAssurancePage({ params }: InputPageProps) {
+export default async function ModelAssurancePage({ params }: ModelPageProps) {
   const { id } = await params;
   const record = await getDecision(id);
 
@@ -15,5 +15,5 @@ export default async function InputAssurancePage({ params }: InputPageProps) {
     notFound();
   }
 
-  return <InputAssurancePanel record={record} />;
+  return <ModelAssurancePanel record={record} />;
 }
