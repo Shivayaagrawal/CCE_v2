@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { DecisionRecord, LayerKey } from '@/lib/data/types';
 import { StatusBadge, StatusIcon } from '@/design/components/StatusBadge';
 import { OutcomeCard } from '@/design/components/OutcomeCard';
@@ -32,6 +32,42 @@ const RESULT_ACCENT_COLORS: Record<string, string> = {
 
 export function PipelineRail({ record, className = '' }: PipelineRailProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore when focused inside interactive form elements
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
+      const currentIndex = LAYER_KEYS.findIndex((k) => pathname.includes(`/${k}`));
+
+      if (['1', '2', '3', '4', '5'].includes(e.key)) {
+        e.preventDefault();
+        const layerIdx = parseInt(e.key, 10) - 1;
+        const targetLayer = LAYER_KEYS[layerIdx];
+        if (targetLayer) {
+          router.push(`/decisions/${record.id}/${targetLayer}`);
+        }
+      } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        e.preventDefault();
+        router.push(`/decisions/${record.id}/${LAYER_KEYS[currentIndex - 1]}`);
+      } else if (e.key === 'ArrowRight' && currentIndex < LAYER_KEYS.length - 1 && currentIndex >= 0) {
+        e.preventDefault();
+        router.push(`/decisions/${record.id}/${LAYER_KEYS[currentIndex + 1]}`);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [pathname, record.id, router]);
 
   return (
     <nav

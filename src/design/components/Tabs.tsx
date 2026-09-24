@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useRef } from 'react';
 
 export interface TabItem {
   id: string;
@@ -14,20 +16,53 @@ export interface TabsProps {
 }
 
 export function Tabs({ items, active, onChange, className = '' }: TabsProps) {
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    let nextIndex = index;
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      nextIndex = (index + 1) % items.length;
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      nextIndex = (index - 1 + items.length) % items.length;
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      nextIndex = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      nextIndex = items.length - 1;
+    } else {
+      return;
+    }
+
+    const nextTab = items[nextIndex];
+    if (nextTab) {
+      onChange(nextTab.id);
+      tabRefs.current[nextTab.id]?.focus();
+    }
+  };
+
   return (
     <div
       role="tablist"
+      aria-orientation="horizontal"
       className={`flex items-center gap-1 border-b border-[var(--rule)] overflow-x-auto no-scrollbar ${className}`}
     >
-      {items.map((tab) => {
+      {items.map((tab, idx) => {
         const isActive = tab.id === active;
         return (
           <button
             key={tab.id}
+            ref={(el) => {
+              tabRefs.current[tab.id] = el;
+            }}
             role="tab"
             aria-selected={isActive}
             tabIndex={isActive ? 0 : -1}
             onClick={() => onChange(tab.id)}
+            onKeyDown={(e) => handleKeyDown(e, idx)}
             className={`relative px-3.5 py-2.5 text-[13px] font-semibold leading-[18px] transition-colors whitespace-nowrap outline-none focus-visible:rounded-[var(--r-sm)] ${
               isActive
                 ? 'text-[var(--primary)]'
@@ -60,3 +95,4 @@ export function Tabs({ items, active, onChange, className = '' }: TabsProps) {
     </div>
   );
 }
+

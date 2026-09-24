@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 
 export interface TooltipProps {
   content: React.ReactNode;
@@ -14,6 +16,17 @@ export function Tooltip({
   className = '',
 }: TooltipProps) {
   const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!visible) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setVisible(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [visible]);
 
   const placementClasses = {
     top: 'bottom-full left-1/2 -translate-x-1/2 mb-1.5',

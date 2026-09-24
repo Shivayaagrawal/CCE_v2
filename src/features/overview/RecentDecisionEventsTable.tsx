@@ -24,24 +24,34 @@ export function RecentDecisionEventsTable({
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
-  const [sortColumn, setSortColumn] = useState<SortColumn>('timestampUtc');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  // Tri-state sorting: null means unsorted (default natural order)
+  const [sortState, setSortState] = useState<{ col: SortColumn; dir: SortDirection } | null>({
+    col: 'timestampUtc',
+    dir: 'desc',
+  });
 
   const handleSort = (col: SortColumn) => {
-    if (sortColumn === col) {
-      setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+    setPage(1);
+    if (!sortState || sortState.col !== col) {
+      setSortState({ col, dir: 'asc' });
+    } else if (sortState.dir === 'asc') {
+      setSortState({ col, dir: 'desc' });
     } else {
-      setSortColumn(col);
-      setSortDirection('desc');
+      // Third click -> unsorted
+      setSortState(null);
     }
   };
 
   const sortedEvents = React.useMemo(() => {
+    if (!sortState) {
+      return events;
+    }
+    const { col, dir } = sortState;
     return [...events].sort((a, b) => {
-      let aVal: any = a[sortColumn];
-      let bVal: any = b[sortColumn];
+      let aVal: any = a[col];
+      let bVal: any = b[col];
 
-      if (sortColumn === 'timestampUtc') {
+      if (col === 'timestampUtc') {
         aVal = new Date(a.timestampUtc).getTime();
         bVal = new Date(b.timestampUtc).getTime();
       }
@@ -51,9 +61,9 @@ export function RecentDecisionEventsTable({
       if (bVal === null || bVal === undefined) return -1;
 
       const cmp = aVal > bVal ? 1 : -1;
-      return sortDirection === 'asc' ? cmp : -cmp;
+      return dir === 'asc' ? cmp : -cmp;
     });
-  }, [events, sortColumn, sortDirection]);
+  }, [events, sortState]);
 
   const totalPages = Math.ceil(sortedEvents.length / pageSize) || 1;
   const currentPage = Math.min(page, totalPages);
@@ -63,6 +73,23 @@ export function RecentDecisionEventsTable({
     if (event.hasFullRecord) {
       router.push(`/decisions/${event.id}/input`);
     }
+  };
+
+  // Generate numbered pages list (up to 5 surrounding current page)
+  const getNumberedPages = () => {
+    const pages: number[] = [];
+    const maxButtons = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+    if (endPage - startPage + 1 < maxButtons) {
+      startPage = Math.max(1, endPage - maxButtons + 1);
+    }
+
+    for (let p = startPage; p <= endPage; p++) {
+      pages.push(p);
+    }
+    return pages;
   };
 
   return (
@@ -79,7 +106,7 @@ export function RecentDecisionEventsTable({
         </div>
 
         <div className="text-[11px] text-[var(--ink-3)] font-mono">
-          8 rows / page · 4 master demo records clickable
+          8 rows / page · {sortState ? `Sorted by ${sortState.col} (${sortState.dir})` : 'Unsorted'}
         </div>
       </div>
 
@@ -87,41 +114,44 @@ export function RecentDecisionEventsTable({
       <div className="overflow-x-auto border border-[var(--rule)] rounded-[var(--r-md)] bg-[var(--surface)]">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="h-[30px] border-b border-[var(--rule)] bg-[var(--surface-2)] text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--ink-3)] select-none">
+            <tr className="h-[32px] border-b border-[var(--rule)] bg-[var(--surface-2)] text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--ink-3)] select-none">
               <th className="px-3 py-1 font-semibold">Decision ID</th>
               <th
-                className="px-3 py-1 font-semibold cursor-pointer hover:text-[var(--ink)]"
+                className="px-3 py-1 font-semibold cursor-pointer hover:text-[var(--ink)] transition-colors"
                 onClick={() => handleSort('timestampUtc')}
+                title="Click to sort (asc → desc → unsorted)"
               >
-                <div className="inline-flex items-center gap-1">
+                <div className="inline-flex items-center gap-1.5">
                   <span>Timestamp</span>
-                  <span className="text-[10px] text-[var(--primary)]">
-                    {sortColumn === 'timestampUtc' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
+                  <span className={`text-[11px] font-bold ${sortState?.col === 'timestampUtc' ? 'text-[var(--primary)]' : 'text-[var(--ink-4)]'}`}>
+                    {sortState?.col === 'timestampUtc' ? (sortState.dir === 'asc' ? '▲' : '▼') : '↕'}
                   </span>
                 </div>
               </th>
               <th className="px-3 py-1 font-semibold">Battery ID</th>
               <th className="px-3 py-1 font-semibold">Vehicle ID</th>
               <th
-                className="px-3 py-1 font-semibold text-right cursor-pointer hover:text-[var(--ink)]"
+                className="px-3 py-1 font-semibold text-right cursor-pointer hover:text-[var(--ink)] transition-colors"
                 onClick={() => handleSort('sohPct')}
+                title="Click to sort (asc → desc → unsorted)"
               >
-                <div className="inline-flex items-center gap-1 justify-end">
+                <div className="inline-flex items-center gap-1.5 justify-end">
                   <span>SoH %</span>
-                  <span className="text-[10px] text-[var(--primary)]">
-                    {sortColumn === 'sohPct' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
+                  <span className={`text-[11px] font-bold ${sortState?.col === 'sohPct' ? 'text-[var(--primary)]' : 'text-[var(--ink-4)]'}`}>
+                    {sortState?.col === 'sohPct' ? (sortState.dir === 'asc' ? '▲' : '▼') : '↕'}
                   </span>
                 </div>
               </th>
               <th className="px-3 py-1 font-semibold">Engine Action</th>
               <th
-                className="px-3 py-1 font-semibold text-right cursor-pointer hover:text-[var(--ink)]"
+                className="px-3 py-1 font-semibold text-right cursor-pointer hover:text-[var(--ink)] transition-colors"
                 onClick={() => handleSort('outcome')}
+                title="Click to sort (asc → desc → unsorted)"
               >
-                <div className="inline-flex items-center gap-1 justify-end">
+                <div className="inline-flex items-center gap-1.5 justify-end">
                   <span>Assurance Outcome</span>
-                  <span className="text-[10px] text-[var(--primary)]">
-                    {sortColumn === 'outcome' ? (sortDirection === 'asc' ? '▲' : '▼') : '↕'}
+                  <span className={`text-[11px] font-bold ${sortState?.col === 'outcome' ? 'text-[var(--primary)]' : 'text-[var(--ink-4)]'}`}>
+                    {sortState?.col === 'outcome' ? (sortState.dir === 'asc' ? '▲' : '▼') : '↕'}
                   </span>
                 </div>
               </th>
@@ -131,7 +161,7 @@ export function RecentDecisionEventsTable({
           <tbody className="divide-y divide-[var(--rule)]">
             {pagedRows.length === 0 ? (
               <tr>
-                <td colSpan={8} className="p-6 text-center text-[12px] text-[var(--ink-3)] italic">
+                <td colSpan={8} className="p-8 text-center text-[12px] text-[var(--ink-3)] italic">
                   No decision events match the active filter criteria.
                 </td>
               </tr>
@@ -143,7 +173,7 @@ export function RecentDecisionEventsTable({
                   <tr
                     key={event.id}
                     onClick={() => handleRowClick(event)}
-                    className={`h-[34px] text-[13px] transition-colors ${
+                    className={`h-[36px] text-[13px] transition-colors ${
                       isClickable
                         ? 'hover:bg-[var(--surface-2)] cursor-pointer group bg-[rgba(29,78,216,0.02)]'
                         : 'hover:bg-[var(--surface-sunken)] cursor-default'
@@ -154,11 +184,13 @@ export function RecentDecisionEventsTable({
                       {isClickable ? (
                         <Link
                           href={`/decisions/${event.id}/input`}
-                          className="text-[var(--primary)] hover:underline flex items-center gap-1"
+                          className="text-[var(--primary)] hover:underline flex items-center gap-1.5 group-hover:text-[var(--primary-hover)]"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <span>{event.id}</span>
-                          <span className="text-[10px] opacity-75">↗</span>
+                          <span className="text-[11px] text-[var(--primary)] opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
+                            →
+                          </span>
                         </Link>
                       ) : (
                         <span className="text-[var(--ink)]">{event.id}</span>
@@ -202,10 +234,11 @@ export function RecentDecisionEventsTable({
                       {isClickable ? (
                         <Link
                           href={`/decisions/${event.id}/input`}
-                          className="text-[11px] font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)] bg-[var(--primary-wash)] px-2 py-0.5 rounded border border-[var(--primary)] transition-colors inline-block"
+                          className="text-[11px] font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)] bg-[var(--primary-wash)] px-2 py-0.5 rounded border border-[var(--primary)] transition-colors inline-flex items-center gap-1 group-hover:shadow-sm"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          View Details →
+                          <span>View Details</span>
+                          <span className="transition-transform group-hover:translate-x-0.5">›</span>
                         </Link>
                       ) : (
                         <span className="text-[11px] text-[var(--ink-3)] select-none">
@@ -235,7 +268,7 @@ export function RecentDecisionEventsTable({
         </table>
       </div>
 
-      {/* Pagination Controls (§12: first, prev, numbered, next, last) */}
+      {/* Pagination Controls (§12: first/prev/numbered/next/last, local state) */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-3 text-[12px] text-[var(--ink-3)] px-1 pt-1 flex-wrap gap-2">
           <div>
@@ -243,6 +276,7 @@ export function RecentDecisionEventsTable({
           </div>
 
           <div className="flex items-center gap-1">
+            {/* First */}
             <button
               type="button"
               disabled={currentPage <= 1}
@@ -251,6 +285,8 @@ export function RecentDecisionEventsTable({
             >
               First
             </button>
+
+            {/* Prev */}
             <button
               type="button"
               disabled={currentPage <= 1}
@@ -260,10 +296,27 @@ export function RecentDecisionEventsTable({
               Prev
             </button>
 
-            <span className="px-2 py-1 text-[12px] font-medium tabular text-[var(--ink)]">
-              Page {currentPage} of {totalPages}
-            </span>
+            {/* Numbered Page Buttons */}
+            {getNumberedPages().map((p) => {
+              const isCurrent = p === currentPage;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setPage(p)}
+                  aria-current={isCurrent ? 'page' : undefined}
+                  className={`min-w-[28px] h-7 px-2 rounded-[var(--r-sm)] text-[11px] font-semibold tabular transition-colors ${
+                    isCurrent
+                      ? 'bg-[var(--primary)] text-white font-bold border border-[var(--primary)]'
+                      : 'bg-[var(--surface)] text-[var(--ink-2)] hover:text-[var(--ink)] border border-[var(--rule)] hover:bg-[var(--surface-2)]'
+                  }`}
+                >
+                  {p}
+                </button>
+              );
+            })}
 
+            {/* Next */}
             <button
               type="button"
               disabled={currentPage >= totalPages}
@@ -272,6 +325,8 @@ export function RecentDecisionEventsTable({
             >
               Next
             </button>
+
+            {/* Last */}
             <button
               type="button"
               disabled={currentPage >= totalPages}

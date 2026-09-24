@@ -175,6 +175,12 @@ export function FilterBar({
               placeholder="Search ID, battery, vehicle..."
               value={filters.query || ''}
               onChange={(e) => onChange({ ...filters, query: e.target.value || undefined, page: 1 })}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  onChange({ ...filters, query: undefined, page: 1 });
+                  (e.target as HTMLInputElement).blur();
+                }
+              }}
               className="w-full px-2.5 py-1.5 pl-7 text-[12px] bg-[var(--surface-2)] border border-[var(--rule)] rounded-[var(--r-sm)] text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:border-[var(--primary)] outline-none"
             />
             <svg
