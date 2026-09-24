@@ -1,6 +1,6 @@
 # CCE Decision Assurance Dashboard — Build Specification
 
-**Version** 1.2 · **Date** 24 September 2026 · **Status** Approved to build · Phase 0.0 merged
+**Version** 1.3 · **Date** 24 September 2026 · **Status** Approved to build · Phase 0.0 merged
 **Owners** Yokesh (Track A) · Shivanya (Track B)
 **Repo** `github.com/Shivayaagrawal/CCE_v2` · **Dev port** 3002
 
@@ -652,11 +652,16 @@ Validated on `#FFFFFF`: lightness band PASS, chroma PASS, worst adjacent CVD ΔE
 
 ### 7.4 Sequential ramp
 
-Single hue, blue, light → dark. For SoH distribution bins and any magnitude encoding.
+Single hue, blue, light → dark. For SoH distribution bins, the cell-voltage chart (C7), the temperature spread (C10), and any magnitude encoding. **13 named steps — the authoritative table, use these exact values and no others:**
 
-`#CDE2FB` · `#9EC5F4` · `#6DA7EC` · `#3987E5` · `#256ABF` · `#184F95` · `#0D366B`
+| step | hex | step | hex | step | hex | step | hex |
+|---|---|---|---|---|---|---|---|
+| 100 | `#CDE2FB` | 250 | `#86B6EF` | 400 | `#3987E5` | 550 | `#1C5CAB` |
+| 150 | `#B7D3F6` | 300 | `#6DA7EC` | 450 | `#2A78D6` | 600 | `#184F95` |
+| 200 | `#9EC5F4` | 350 | `#5598E7` | 500 | `#256ABF` | 650 | `#104281` |
+| | | | | | | 700 | `#0D366B` |
 
-For ordinal use (discrete ordered bins), start no lighter than `#86B6EF`.
+For ordinal use (discrete ordered bins, e.g. the 5 SoH bins in C2), start no lighter than step **250** (`#86B6EF`).
 
 Policy band → colour mapping for the SoH distribution chart:
 

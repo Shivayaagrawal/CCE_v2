@@ -85,13 +85,13 @@ function normalizeStatus(status: StatusValue): 'assured' | 'limitation' | 'revie
 function getStatusLabel(status: StatusValue): string {
   switch (status) {
     case 'ASSURED':
-      return 'ASSURED';
+      return 'Assured';
     case 'ASSURED WITH LIMITATIONS':
-      return 'ASSURED WITH LIMITATIONS';
+      return 'Assured with limitations';
     case 'REVIEW REQUIRED':
-      return 'REVIEW REQUIRED';
+      return 'Review required';
     case 'ESCALATE':
-      return 'ESCALATE';
+      return 'Escalate';
     case 'clear':
       return 'Clear';
     case 'limitation':

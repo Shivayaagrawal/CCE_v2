@@ -63,17 +63,17 @@
 
   /* 7.4 sequential ramp (13 named steps 100-700) */
   --seq-100:         #CDE2FB;
-  --seq-150:         #B6D4F8;
+  --seq-150:         #B7D3F6;
   --seq-200:         #9EC5F4;
   --seq-250:         #86B6EF;   /* Ordinal start step */
   --seq-300:         #6DA7EC;
-  --seq-350:         #5397E9;
+  --seq-350:         #5598E7;
   --seq-400:         #3987E5;
-  --seq-450:         #2F78D2;
+  --seq-450:         #2A78D6;
   --seq-500:         #256ABF;
-  --seq-550:         #1F5DAA;
+  --seq-550:         #1C5CAB;
   --seq-600:         #184F95;
-  --seq-650:         #124380;
+  --seq-650:         #104281;
   --seq-700:         #0D366B;
 
   /* 7.5 type scale fonts */

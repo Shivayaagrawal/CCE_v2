@@ -226,17 +226,17 @@ export default function StyleguidePage() {
                 <div className="grid grid-cols-7 sm:grid-cols-13 gap-1">
                   {[
                     { step: '100', hex: '#CDE2FB' },
-                    { step: '150', hex: '#B6D4F8' },
+                    { step: '150', hex: '#B7D3F6' },
                     { step: '200', hex: '#9EC5F4' },
                     { step: '250', hex: '#86B6EF' },
                     { step: '300', hex: '#6DA7EC' },
-                    { step: '350', hex: '#5397E9' },
+                    { step: '350', hex: '#5598E7' },
                     { step: '400', hex: '#3987E5' },
-                    { step: '450', hex: '#2F78D2' },
+                    { step: '450', hex: '#2A78D6' },
                     { step: '500', hex: '#256ABF' },
-                    { step: '550', hex: '#1F5DAA' },
+                    { step: '550', hex: '#1C5CAB' },
                     { step: '600', hex: '#184F95' },
-                    { step: '650', hex: '#124380' },
+                    { step: '650', hex: '#104281' },
                     { step: '700', hex: '#0D366B' },
                   ].map((ramp, idx) => (
                     <div key={ramp.step} className="p-1 rounded-[var(--r-sm)] text-center flex flex-col justify-between h-16" style={{ backgroundColor: ramp.hex, color: idx > 6 ? '#FFF' : '#0F1B2D' }}>

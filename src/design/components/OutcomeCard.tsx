@@ -14,28 +14,28 @@ const outcomeMeta: Record<
   { label: string; bg: string; border: string; ink: string; mark: string }
 > = {
   ASSURED: {
-    label: 'ASSURED',
+    label: 'Assured',
     bg: 'var(--assured-bg)',
     border: 'var(--assured-border)',
     ink: 'var(--assured-ink)',
     mark: 'var(--assured)',
   },
   'ASSURED WITH LIMITATIONS': {
-    label: 'ASSURED WITH LIMITATIONS',
+    label: 'Assured with limitations',
     bg: 'var(--limitation-bg)',
     border: 'var(--limitation-border)',
     ink: 'var(--limitation-ink)',
     mark: 'var(--limitation)',
   },
   'REVIEW REQUIRED': {
-    label: 'REVIEW REQUIRED',
+    label: 'Review required',
     bg: 'var(--review-bg)',
     border: 'var(--review-border)',
     ink: 'var(--review-ink)',
     mark: 'var(--review)',
   },
   ESCALATE: {
-    label: 'ESCALATE',
+    label: 'Escalate',
     bg: 'var(--escalate-bg)',
     border: 'var(--escalate-border)',
     ink: 'var(--escalate-ink)',
