@@ -166,12 +166,47 @@ export interface DecisionEvent {
   timestampUtc: string;
   batteryId: string;
   vehicleId: string;
+  vehicleType: VehicleType;
+  manufacturer: string;
   sohPct: number;
   sohStatus: SohStatus;
   engineAction: EngineAction;
   outcome: Outcome;
   layerResults: Record<LayerKey, LayerResult>;
   hasFullRecord: boolean;
+}
+
+/** Vehicle categories. Derived from the `vehicle_type` field on the source
+ *  vehicle record. These five are the closed set for this build. */
+export type VehicleType =
+  | 'Last Mile Delivery'
+  | 'Intercity Cargo'
+  | 'Passenger Shuttle'
+  | 'Municipal Fleet'
+  | 'Rental Pool';
+
+/** The filter shape every accessor accepts. Omitted keys mean "no constraint".
+ *  Arrays are OR within a key, AND across keys. */
+export interface EventFilters {
+  /** Inclusive ISO date bounds. Omit for the whole window. */
+  from?: string;
+  to?: string;
+  vehicleTypes?: VehicleType[];
+  manufacturers?: string[];
+  outcomes?: Outcome[];
+  engineActions?: EngineAction[];
+  sohStatuses?: SohStatus[];
+  /** SoH band filter, used by cross-filtering from the distribution chart. */
+  sohBand?: { min: number; max: number };
+  /** Free-text match against decision ID, battery ID and vehicle ID. */
+  query?: string;
+  /** Pagination. Defaults: page 1, pageSize 8 (§12). */
+  page?: number;
+  pageSize?: number;
+  sort?: {
+    column: 'timestampUtc' | 'sohPct' | 'outcome' | 'batteryId' | 'vehicleId';
+    direction: 'asc' | 'desc';
+  };
 }
 
 // ---------- aggregates ----------
