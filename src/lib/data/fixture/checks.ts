@@ -7,10 +7,10 @@ export const INPUT_CHECK_DEFS: CheckDef[] = [
   { id: 'CYCLE-03', label: 'Charge Cycle Count', evaluates: 'Cycle count is an integer ≥ 0 and within rated cycle life' },
   { id: 'AIS-156-SOC', label: 'State of Charge (SoC)', evaluates: 'SoC ≥ 10.0% to prevent deep-discharge cell reversal' },
   { id: 'CURR-DIR-05', label: 'Current Direction & Envelope', evaluates: 'Current sign aligns with operation; continuous C-rate limits' },
-  { id: 'POWER-SIGN-06', label: 'Power Sign & Identity Consistency', evaluates: 'Power sign matches current; P = V × I within tolerance' },
+  { id: 'POWER-SIGN-06', label: 'Power Sign vs Current Sign', evaluates: 'Power sign must be consistent with current sign.' },
   { id: 'AIS-038-IMB', label: 'Cell Imbalance Standard', evaluates: 'σ of the 14 cell voltages ≤ 0.050 V (50 mV)' },
   { id: 'IR-POS-08', label: 'Internal Resistance Rectification', evaluates: 'Internal resistance strictly > 0 Ω post-rectification' },
-  { id: 'PACK-V-10', label: 'Pack Voltage vs Series Sum', evaluates: 'Pack voltage equals the sum of 14 cells; 35.00–58.80 V' },
+  { id: 'PACK-V-10', label: 'Pack Voltage vs Cell Sum', evaluates: 'Pack voltage must equal sum of Cell 01–14.' },
   { id: 'TEMP-RANGE-12', label: 'Thermal Spread & Limits', evaluates: 'All sensors within −20.0 to +60.0 °C discharge window' },
   { id: 'OVUV-11', label: 'BMS Fault & Safety Triggers', evaluates: 'Latching over/under-voltage fault flags equal 0' },
 ];

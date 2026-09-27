@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Bar,
@@ -147,7 +148,15 @@ export function OverviewDashboard() {
       key: 'id',
       label: 'Decision ID',
       width: '16%',
-      render: (row) => <span className="font-mono text-[12px] text-[var(--primary)]">{row.id}</span>,
+      render: (row) => (
+        <Link
+          href={`/decisions/${row.id}/${firstStopSlug(row.layerResults)}`}
+          className="font-mono text-[12px] text-[var(--primary)] underline-offset-2 hover:underline"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {row.id}
+        </Link>
+      ),
     },
     { key: 'batteryId', label: 'Battery ID', width: '15%', render: (row) => <span className="font-mono text-[12px]">{row.batteryId}</span> },
     { key: 'vehicleId', label: 'Vehicle ID', width: '13%', render: (row) => <span className="font-mono text-[12px]">{row.vehicleId}</span> },
@@ -161,7 +170,7 @@ export function OverviewDashboard() {
       render: (row) => (
         <OutcomeLink
           outcome={row.outcome}
-          enabled={row.hasFullRecord}
+          enabled
           onOpen={() => router.push(`/decisions/${row.id}/${firstStopSlug(row.layerResults)}`)}
         />
       ),
@@ -193,11 +202,8 @@ export function OverviewDashboard() {
             </div>
           </Entrance>
         )}
-        <Entrance index={1}>
-          <FilterBar filters={filters} asOf={AS_OF} totalFiltered={events?.total} onChange={(next) => setFilters({ ...next, page: 1, pageSize: 8 })} onExport={exportCsv} />
-        </Entrance>
         {aggregates && (
-          <section className="flex flex-col gap-3">
+          <section className="flex flex-col gap-2">
             <div className="flex flex-wrap items-center gap-3 rounded-[var(--r-md)] border border-[var(--escalate-border)] bg-[var(--surface)] px-3 py-2">
               <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--escalate-bg)] text-[var(--escalate)]" aria-hidden>
                 <ReviewIcon />
@@ -219,17 +225,37 @@ export function OverviewDashboard() {
                 Show held cases
               </button>
             </div>
-            <p className="text-[13px] text-[var(--ink-2)]">
-              <span className="font-semibold text-[var(--assured-ink)]">{formatCount(aggregates.byOutcome.ASSURED)} assured</span>
-              <span className="mx-2 text-[var(--rule-strong)]">/</span>
-              <span className="font-semibold text-[#7A5600]">{formatCount(aggregates.byOutcome['ASSURED WITH LIMITATIONS'])} with limitations</span>
-              <span className="mx-2 text-[var(--rule-strong)]">/</span>
-              <span className="font-semibold text-[var(--ink)]">{formatCount(aggregates.totalEvents)} events</span>
-              {prior ? <span className="text-[var(--ink-3)]"> · prior window {formatCount(prior.totalEvents)}</span> : null}
-            </p>
-            <AssurancePipeline rates={aggregates.layerClearRate} />
           </section>
         )}
+        <Entrance index={1}>
+          <FilterBar filters={filters} asOf={AS_OF} totalFiltered={events?.total} onChange={(next) => setFilters({ ...next, page: 1, pageSize: 8 })} onExport={exportCsv} />
+        </Entrance>
+        <Panel title="Recent decision events" className="min-w-0">
+          <DataTable
+            fixedLayout
+            columns={columns}
+            rows={events?.rows ?? []}
+            total={events?.total}
+            page={events?.page ?? 1}
+            pageSize={8}
+            onPageChange={(page) => setFilters((current) => ({ ...current, page }))}
+            isRowClickable={() => true}
+            onRowClick={(row) => {
+              router.push(`/decisions/${row.id}/${firstStopSlug(row.layerResults)}`);
+            }}
+          />
+        </Panel>
+        {aggregates && (
+          <p className="text-[13px] text-[var(--ink-2)]">
+            <span className="font-semibold text-[var(--assured-ink)]">{formatCount(aggregates.byOutcome.ASSURED)} assured</span>
+            <span className="mx-2 text-[var(--rule-strong)]">/</span>
+            <span className="font-semibold text-[#7A5600]">{formatCount(aggregates.byOutcome['ASSURED WITH LIMITATIONS'])} with limitations</span>
+            <span className="mx-2 text-[var(--rule-strong)]">/</span>
+            <span className="font-semibold text-[var(--ink)]">{formatCount(aggregates.totalEvents)} events</span>
+            {prior ? <span className="text-[var(--ink-3)]"> · prior window {formatCount(prior.totalEvents)}</span> : null}
+          </p>
+        )}
+        {aggregates && <AssurancePipeline rates={aggregates.layerClearRate} />}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 items-stretch" key={playKey}>
           <ChartFrame className="min-w-0 h-full overflow-hidden" title="Assurance result distribution" tableView={c1.tableView} onToggleTable={c1.onToggleTable} tableContent={<SliceTable rows={outcomeSlices} />}>
             <Donut data={outcomeSlices} total={aggregates?.totalEvents ?? 0} duration={duration} onPick={(key) => setFilters((current) => ({ ...current, outcomes: current.outcomes?.[0] === key ? undefined : [key as Outcome], page: 1 }))} />
@@ -272,22 +298,6 @@ export function OverviewDashboard() {
           <ChartFrame className="min-w-0 h-full overflow-hidden" title="Decision distribution" tableView={c4.tableView} onToggleTable={c4.onToggleTable} tableContent={<SliceTable rows={actionSlices} />}>
             <Donut data={actionSlices} total={aggregates?.totalEvents ?? 0} duration={duration} onPick={(key) => setFilters((current) => ({ ...current, engineActions: current.engineActions?.[0] === key ? undefined : [key as EngineAction], page: 1 }))} />
           </ChartFrame>
-        </div>
-        <div className="grid grid-cols-1 gap-3">
-          <Panel title="Recent decision events" className="min-w-0">
-            <DataTable
-              fixedLayout
-              columns={columns}
-              rows={events?.rows ?? []}
-              total={events?.total}
-              page={events?.page ?? 1}
-              pageSize={8}
-              onPageChange={(page) => setFilters((current) => ({ ...current, page }))}
-              onRowClick={(row) => {
-                if (row.hasFullRecord) router.push(`/decisions/${row.id}/${firstStopSlug(row.layerResults)}`);
-              }}
-            />
-          </Panel>
         </div>
         <div className="grid grid-cols-1 gap-3">
           <div className="min-w-0">

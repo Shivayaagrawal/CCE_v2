@@ -1,10 +1,12 @@
 import type { Alert, DecisionRecord } from '@/lib/data/types';
 import { UC_CASES } from './cases';
 import { alertTimestampUtc, buildFleet, type GeneratedFleetEvent } from './fleet';
+import { recordFromFleetEvent } from './fleetRecord';
 import { mulberry32 } from './prng';
 import { FLEET_SEED } from './config';
 
 let fleetCache: GeneratedFleetEvent[] | null = null;
+const synthesizedRecords = new Map<string, DecisionRecord>();
 
 export function getFleetRows(): GeneratedFleetEvent[] {
   if (!fleetCache) {
@@ -20,7 +22,14 @@ export function getAllDecisionRecords(): DecisionRecord[] {
 export function getRecordById(id: string): DecisionRecord | null {
   const row = getFleetRows().find((r) => r.id === id);
   if (row?.record) return row.record;
-  return UC_CASES.find((c) => c.id === id) ?? null;
+  const pinned = UC_CASES.find((c) => c.id === id);
+  if (pinned) return pinned;
+  if (!row) return null;
+  const cached = synthesizedRecords.get(id);
+  if (cached) return cached;
+  const built = recordFromFleetEvent(row, getFleetRows());
+  synthesizedRecords.set(id, built);
+  return built;
 }
 
 export function buildAlerts(): Alert[] {

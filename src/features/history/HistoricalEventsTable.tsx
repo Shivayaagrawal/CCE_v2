@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { DecisionEvent } from '@/lib/data/types';
 import { getVehicleHistory } from '@/lib/data';
 import { formatDateTime, formatPercent } from '@/lib/format';
 import { Panel } from '@/design/components/Panel';
 import { StatusBadge } from '@/design/components/StatusBadge';
-import { engineActionLabel } from '@/features/labels';
+import { engineActionLabel, firstStopSlug } from '@/features/labels';
 
 export function HistoricalEventsTable({ vehicleId, currentId }: { vehicleId: string; currentId: string }) {
   const router = useRouter();
@@ -38,19 +39,20 @@ export function HistoricalEventsTable({ vehicleId, currentId }: { vehicleId: str
           </thead>
           <tbody>
             {rows.map((row) => {
-              const clickable = row.hasFullRecord;
+              const href = `/decisions/${row.id}/${firstStopSlug(row.layerResults)}`;
               return (
                 <tr
                   key={row.id}
-                  title={clickable ? undefined : 'Detailed assurance record not retained for this event.'}
-                  onClick={() => {
-                    if (clickable) router.push(`/decisions/${row.id}/input`);
-                  }}
-                  className={`h-[34px] text-[12px] border-t border-[var(--rule)] ${
+                  onClick={() => router.push(href)}
+                  className={`h-[34px] text-[12px] border-t border-[var(--rule)] cursor-pointer hover:bg-[var(--surface-2)] ${
                     row.id === currentId ? 'bg-[var(--primary-wash)]' : ''
-                  } ${clickable ? 'cursor-pointer hover:bg-[var(--surface-2)]' : 'cursor-default'}`}
+                  }`}
                 >
-                  <td className="px-2 font-mono text-[11px]">{row.id}</td>
+                  <td className="px-2 font-mono text-[11px]">
+                    <Link href={href} className="text-[var(--primary)]" onClick={(event) => event.stopPropagation()}>
+                      {row.id}
+                    </Link>
+                  </td>
                   <td className="px-2 text-[var(--ink-2)]">{formatDateTime(row.timestampUtc)}</td>
                   <td className="px-2 text-right tabular">{formatPercent(row.sohPct)}</td>
                   <td className="px-2">{engineActionLabel(row.engineAction)}</td>
